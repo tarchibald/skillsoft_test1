@@ -38,4 +38,8 @@ RUN mkdir -p /home/jenkins/.ansible && \
     chown -R 1000:1000 /home/jenkins/.ssh
 USER jenkins
 
+ADD pr.py /
+
+CMD [ "python", "./pr.py" ]
+
 ENTRYPOINT ["setup.yaml"]

@@ -1,7 +1,7 @@
 pipeline {
   agent { docker { image 'python:3.7.2' } }
   stages {
-    stage('test') {
+    stage('Report Open/Waiting Pull Request') {
       steps {
         sh 'python pr.py'
       }   
