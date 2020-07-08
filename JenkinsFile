@@ -1,5 +1,5 @@
 def now = new Date()  // Get the current time
-// Get a list of all running jobs
+// Get a list of all running job
 def buildingJobs = Jenkins.instance.getAllItems(Job.class).findAll { 
   it.isBuilding() }
 
