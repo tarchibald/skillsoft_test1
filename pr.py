@@ -13,15 +13,13 @@ pulls = repo.get_pulls(state='open', sort='created', base='master')
 
 for pr in pulls:
 
-    var prinfo = "PR Number: %d  PR State: %s " % (pr.number, pr.state) 
+    prinfo = "PR Number: %d  PR State: %s " % (pr.number, pr.state) 
     print(prinfo) 
-    slack_message(pr, channel)
+    slack_message(prinfo, channel)
 
 
 #slack no longer test tokens https://api.slack.com/legacy/custom-integrations/legacy-tokens
- def slack_message(message, channel):
+def slack_message(message, channel):
     token = 'XXXXXXXX'
     sc = SlackClient(token)
-    sc.api_call('chat.postMessage', channel=channel, 
-                text=message, username='My Sweet Bot',
-                icon_emoji=':robot_face:')   
+    sc.api_call('chat.postMessage', channel=channel, text=message, username='xxxxxxxx')   
