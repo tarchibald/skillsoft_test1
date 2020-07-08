@@ -1,0 +1,19 @@
+If we want to deploy this application to production environment, describe steps
+and tools you will use to achieve this.
+
+- Load Balancing
+    -nginx, HAProxy, ALB/ELB
+
+- all username / passwords / tokens should be stored in SSM/Secrets Manager (hard coded for this excersize)
+
+- security hardeninig for AMI's / images
+
+- Apply all security patches
+    - AMI Patching / CIS audits
+
+- Control Network Access
+
+- Ideally deploy to Kubernetes cluster
+    - TLS for all api traffic
+    - POD security policies
+    - Istio / datadog
