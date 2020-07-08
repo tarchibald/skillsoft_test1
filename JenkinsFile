@@ -1,10 +1,43 @@
+//Execute at minute 0 past 20th hour on every Wednesday 
+properties([
+    pipelineTriggers([cron(env.BRANCH_NAME == 'master' ? '0 20 * * 3' : '')])
+])
+
 pipeline {
-  agent { docker { image 'python:3.7.2' } }
-  stages {
-    stage('Report Open/Waiting Pull Request') {
-      steps {
-        sh 'python pr.py'
-      }   
+
+    agent { docker { image 'python:3.7.2' } }
+
+    stages {
+        
+        stage('Checkout') {
+            
+            steps {
+
+                checkout([$class: 'GitSCM', branches: [[name: '**']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/tarchibald/skillsoft_test1.git']]])
+
+            }      
+    
+        } 
+
+        stage('List OS .env variables') {
+
+            steps {
+
+                sh 'printenv'
+
+            }
+
+        } 
+
+        stage('Report Open/Waiting Pull Request') {
+
+            steps {
+
+                sh 'python pr.py'
+
+            }
+
+        }
+
     }
-  }
 }
