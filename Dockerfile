@@ -1,28 +1,45 @@
-FROM openjdk:8-jdk-stretch
+FROM jenkinsci/slave:latest 
+USER root
+RUN apt-get update && \
+    apt-get -y install apt-transport-https \
+    ca-certificates \
+    python \
+    openssh-client \
+    curl \
+    gnupg2 \
+    software-properties-common && \
+    curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg > /tmp/dkey; apt-key add /tmp/dkey && \
+    add-apt-repository \
+    "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") \
+    $(lsb_release -cs) \
+    stable" && \
+    apt-get update && \
+    apt-get -y install docker-ce
 
-ARG VERSION=4.3
-ARG user=jenkins
-ARG group=jenkins
-ARG uid=1000
-ARG gid=1000
+#download Ansible
+RUN mkdir /etc/ansible/ /ansible
+RUN echo "[local]" >> /etc/ansible/hosts && \
+    echo "localhost" >> /etc/ansible/hosts
 
-RUN groupadd -g ${gid} ${group}
-RUN useradd -c "Jenkins user" -d /home/${user} -u ${uid} -g ${gid} -m ${user}
-LABEL Description="This is a base image, which provides the Jenkins agent executable (agent.jar)" Vendor="Jenkins project" Version="${VERSION}"
+RUN \
+  curl -fsSL https://releases.ansible.com/ansible/ansible-2.2.2.0.tar.gz -o ansible.tar.gz && \
+  tar -xzf ansible.tar.gz -C ansible --strip-components 1 && \
+  rm -fr ansible.tar.gz /ansible/docs /ansible/examples /ansible/packaging
 
-ARG AGENT_WORKDIR=/home/${user}/agent
+RUN mkdir -p /ansible/playbooks
+WORKDIR /ansible/playbooks
 
-RUN echo 'deb http://deb.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/stretch-backports.list
-RUN apt-get update && apt-get install -t stretch-backports git-lfs && rm -rf /var/lib/apt/lists/*
-RUN curl --create-dirs -fsSLo /usr/share/jenkins/agent.jar https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${VERSION}/remoting-${VERSION}.jar \
-  && chmod 755 /usr/share/jenkins \
-  && chmod 644 /usr/share/jenkins/agent.jar \
-  && ln -sf /usr/share/jenkins/agent.jar /usr/share/jenkins/slave.jar
+RUN usermod -a -G docker jenkins
+RUN apt-get update && apt-get install -y python-pip 
+RUN pip install ansible 
+RUN mkdir -p /home/jenkins/.ansible && \
+    mkdir -p /home/jenkins/.ssh && \
+    chown -R 1000:1000 /home/jenkins/.ansible && \
+    chown -R 1000:1000 /home/jenkins/.ssh
+USER jenkins
 
-USER ${user}
-ENV AGENT_WORKDIR=${AGENT_WORKDIR}
-RUN mkdir /home/${user}/.jenkins && mkdir -p ${AGENT_WORKDIR}
+ADD pr.py /
 
-VOLUME /home/${user}/.jenkins
-VOLUME ${AGENT_WORKDIR}
-WORKDIR /home/${user}
+CMD [ "python", "./pr.py" ]
+
+ENTRYPOINT ["setup.yaml"]

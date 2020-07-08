@@ -38,8 +38,8 @@
     state: started
     enabled: yes
   
-- name: Add user yogesh to docker group
+- name: Add user tarchibald to docker group
   user:
-      name: yogesh
+      name: tarchibald
       groups: docker
       append: yes
