@@ -22,7 +22,7 @@ for pr in pulls:
 #slack no longer test tokens https://api.slack.com/legacy/custom-integrations/legacy-tokens
 def slack_message(message, channel):
 
-    token = 'XXXXXXXX'
+    token = 'yBlpi5mu3jBOdcRheVchgh9R'
 
     sc = SlackClient(token)
 
