@@ -18,7 +18,6 @@ buildingJobs.each { job->
         String jobname = item.getUrl()
         String baseURl = 'http://localhost:8080/'
         jobname = jobname.replaceAll('job/', '')  // Strip redundant folder info.
-
         println "${duration_mins.toString().padLeft(5)}/" +
             "${estDurationMins.toString().padLeft(4)}  - " +
             "<a href=http://localhost:8080/${item.getUrl()}>${jobname}</a>"
