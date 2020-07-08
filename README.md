@@ -1,2 +1,2 @@
 # skillsoft_test1
-test repo
+Repo for Skillsoft Test
